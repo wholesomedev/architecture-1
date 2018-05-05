@@ -1,0 +1,37 @@
+title: Hollowverse Architecture
+
+description: The architectures of Hollowverse
+
+repository: hollowverse/architectures
+
+collections:
+  architectures:
+    output: true
+    permalink: /architectures/:path/
+
+defaults:
+  - scope:
+      path: ""
+      type: "work"
+    values:
+      layout: "default"
+
+theme: minima
+
+version: v1.2.0
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+
+sass:
+  style: :compressed
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - README.md
+  - CNAME

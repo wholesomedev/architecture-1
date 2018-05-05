@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<title>Blogging Like a Hacker | Hollowverse Architecture</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="Blogging Like a Hacker" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="After Downloading index.html" />
+<meta property="og:description" content="After Downloading index.html" />
+<link rel="canonical" href="http://localhost:4000/architectures/afterDownloadingIndexHtml/" />
+<meta property="og:url" content="http://localhost:4000/architectures/afterDownloadingIndexHtml/" />
+<meta property="og:site_name" content="Hollowverse Architecture" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-04T23:08:01-07:00" />
+<script type="application/ld+json">
+{"description":"After Downloading index.html","@type":"BlogPosting","url":"http://localhost:4000/architectures/afterDownloadingIndexHtml/","headline":"Blogging Like a Hacker","dateModified":"2018-05-04T23:08:01-07:00","datePublished":"2018-05-04T23:08:01-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/architectures/afterDownloadingIndexHtml/"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=6d0a7b2f0de56baf6adaa4699885692da0e283b8">
+    <script src="https://unpkg.com/mermaid@8.0.0-rc.8/dist/mermaid.min.js"/>
+    <script>
+    </script>
+    <script>
+      setTimeout(() => {
+        mermaid.init({startOnLoad:true}, ".language-mermaid");
+      }, 2000)
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="http://localhost:4000/">Hollowverse Architecture</a></h1>
+
+        <p>The architectures of Hollowverse</p>
+
+        
+        <p class="view"><a href="http://github.com/hollowverse/architectures">View the Project on GitHub <small>hollowverse/architectures</small></a></p>
+        
+
+        
+
+      </header>
+      <section>
+
+      <ul>
+          
+            <li><a href="/architectures/afterDownloadingIndexHtml/">Blogging Like a Hacker</a></li>
+          
+            <li><a href="/architectures/hollowverseComCloudFront/">Blogging Like a asdf</a></li>
+          
+      </ul>
+
+      <h1 id="after-downloading-indexhtml">After Downloading <code class="highlighter-rouge">index.html</code></h1>
+
+<p>This documents what happens after the user loads <code class="highlighter-rouge">index.html</code> of <code class="highlighter-rouge">hollowverse.com</code></p>
+
+<h2 id="notable-person-page-eg-tom_hanks">Notable Person page (e.g. <code class="highlighter-rouge">/Tom_Hanks</code>)</h2>
+
+<pre><code class="language-mermaid">sequenceDiagram
+  participant browser as Browser
+  participant api as api hollowverse com
+  participant aurora as AWS Aurora
+  participant photos as photos hollowverse com
+  participant s3 as AWS S3 bucket
+
+  browser -&gt;&gt; api: Request Notable Person data
+  api -&gt;&gt; aurora: Request Notable Person data
+  aurora -&gt;&gt; api: Return Notable Person data
+  api -&gt;&gt; browser: Return Notable Person data (including photo URL)
+  browser -&gt;&gt; photos: Request photo
+  photos -&gt;&gt; s3: Request photo
+  s3 -&gt;&gt; photos: Return photo
+  photos -&gt;&gt; browser: Return photo
+</code></pre>
+
+<h2 id="search-page-search">Search page (<code class="highlighter-rouge">/search</code>)</h2>
+
+<pre><code class="language-mermaid">sequenceDiagram
+  participant browser as Browser
+  participant algolia as AlgoliaSearch
+  participant photos as photos hollowverse com
+  participant s3 as AWS S3 bucket
+
+  browser -&gt;&gt; algolia: Request results for user search
+  algolia -&gt;&gt; browser: Return search results (including photo URLs)
+  browser -&gt;&gt; photos: Request photo
+  photos -&gt;&gt; s3: Request photo
+  s3 -&gt;&gt; photos: Return photo
+  photos -&gt;&gt; browser: Return photo
+</code></pre>
+
+<h2 id="any-hollowverse-page">Any Hollowverse page</h2>
+
+<pre><code class="language-mermaid">sequenceDiagram
+  participant browser as Browser
+  participant sl as SumoLogic
+  participant ga as Google Analytics
+
+  browser -&gt;&gt; sl: Log events to SumoLogic
+  browser -&gt;&gt; ga: Log events to Google Analytics
+</code></pre>
+
+<p>All of Hollowverse pages log events to SumoLogic and Google Analytics.</p>
+
+<p>SumoLogic logging is used for short term debugging and monitoring.</p>
+
+<p>Google Analytics logging is used for long-term analytics purposes.</p>
+
+
+      </section>
+      <footer>
+        
+        <p>This project is maintained by <a href="http://github.com/hollowverse">hollowverse</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+  </body>
+</html>

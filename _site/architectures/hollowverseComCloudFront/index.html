@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<title>Blogging Like a asdf | Hollowverse Architecture</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="Blogging Like a asdf" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="hollowverse.com CloudFront distribution" />
+<meta property="og:description" content="hollowverse.com CloudFront distribution" />
+<link rel="canonical" href="http://localhost:4000/architectures/hollowverseComCloudFront/" />
+<meta property="og:url" content="http://localhost:4000/architectures/hollowverseComCloudFront/" />
+<meta property="og:site_name" content="Hollowverse Architecture" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-04T23:08:01-07:00" />
+<script type="application/ld+json">
+{"description":"hollowverse.com CloudFront distribution","@type":"BlogPosting","url":"http://localhost:4000/architectures/hollowverseComCloudFront/","headline":"Blogging Like a asdf","dateModified":"2018-05-04T23:08:01-07:00","datePublished":"2018-05-04T23:08:01-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/architectures/hollowverseComCloudFront/"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=6d0a7b2f0de56baf6adaa4699885692da0e283b8">
+    <script src="https://unpkg.com/mermaid@8.0.0-rc.8/dist/mermaid.min.js"/>
+    <script>
+    </script>
+    <script>
+      setTimeout(() => {
+        mermaid.init({startOnLoad:true}, ".language-mermaid");
+      }, 2000)
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="http://localhost:4000/">Hollowverse Architecture</a></h1>
+
+        <p>The architectures of Hollowverse</p>
+
+        
+        <p class="view"><a href="http://github.com/hollowverse/architectures">View the Project on GitHub <small>hollowverse/architectures</small></a></p>
+        
+
+        
+
+      </header>
+      <section>
+
+      <ul>
+          
+            <li><a href="/architectures/afterDownloadingIndexHtml/">Blogging Like a Hacker</a></li>
+          
+            <li><a href="/architectures/hollowverseComCloudFront/">Blogging Like a asdf</a></li>
+          
+      </ul>
+
+      <h1 id="hollowversecom-cloudfront-distribution">hollowverse.com CloudFront distribution</h1>
+
+<pre><code class="language-mermaid">graph TD
+  start(Request) --&gt; aetvr["Assign beta, master, or other&lt;br&gt;environment to request&lt;br&gt;&lt;br&gt;(assignEnvironmentToViewerRequest)"]
+  aetvr --&gt; isCached{Is content&lt;br&gt;cached for&lt;br&gt;assigned&lt;br&gt;environment?}
+  isCached --&gt; |Yes| cachedContent[Get cached content]
+  cachedContent --&gt; response(Response)
+  isCached --&gt; |No| routeRequestToOrigin["Determine the server&lt;br&gt;for the assigned&lt;br&gt;environment&lt;br&gt;&lt;br&gt;(routeRequestToOrigin)"]
+  routeRequestToOrigin --&gt; whichEnv{Which&lt;br&gt;environment&lt;br&gt;was&lt;br&gt;selected?}
+  whichEnv -- beta --&gt; beta[Retrieve content from&lt;br&gt;beta environment]
+  whichEnv -- master --&gt; master[Retrieve content from&lt;br&gt;master environment]
+  whichEnv -- other --&gt; other[Retrieve content from&lt;br&gt;whatever environment]
+  beta --&gt; setHeaders["Set headers on response&lt;br&gt;before sending it back&lt;br&gt;&lt;br&gt;(setHeadersOnOriginResponse)"]
+  master --&gt; setHeaders
+  other --&gt; setHeaders
+  setHeaders --&gt; cache[Add response to cache&lt;br&gt;for subsequent requests]
+  cache --&gt; response
+</code></pre>
+
+<p>When CloudFront receives the request for the page, it executes the <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-edge.html">Lambda@Edge</a> associated with the <code class="highlighter-rouge">viewer-request</code> stage. This is <a href="https://github.com/hollowverse/route-request/blob/master/src/assignEnvironmentToViewerRequest.ts"><code class="highlighter-rouge">assignEnvironmentToViewerRequest</code></a>.</p>
+
+<p><code class="highlighter-rouge">assignEnvironmentToViewerRequest</code>, as the name implies, modifies the request to add an environment. Specifically, it adds the <code class="highlighter-rouge">x-hollowverse-assigned-environment</code> header, whose value is either:</p>
+
+<ul>
+  <li>a random environment name picked based on predefined weights (e.g. 75% of traffic should be served from <code class="highlighter-rouge">master</code> and 25% from <code class="highlighter-rouge">beta</code>) if the incoming request has no <code class="highlighter-rouge">env</code> cookie in the <code class="highlighter-rouge">Cookie</code> header, or if the value of that cookie is invalid (e.g. the environment has been removed or renamed).</li>
+  <li>the same value of the <code class="highlighter-rouge">env</code> cookie if this cookie exists in the incoming request’s headers and the value is a valid environment name.</li>
+</ul>
+
+<p>CloudFront then looks for a cached copy of the page that matches exactly the headers of the request <em>after</em> the request has been modified by <code class="highlighter-rouge">assignEnvironmentToViewerRequest</code>.</p>
+
+<p>If a cached response is available for the resulting cache key, CloudFront returns that copy and the viewer request does not hit the origin server.</p>
+
+<p>If no cached response is available, CloudFront will execute the Lambda@Edge assigned to the <code class="highlighter-rouge">origin-request</code> stage, which is <a href="https://github.com/hollowverse/route-request/blob/master/src/routeRequestToOrigin.ts"><code class="highlighter-rouge">routeRequestToOrigin</code></a>.</p>
+
+<p><code class="highlighter-rouge">routeRequestToOrigin</code> reads the <code class="highlighter-rouge">x-hollowverse-requested-environment</code> header and modifies the request so that it is directed to the corresponding environment. The process of fetching the origin response is describe in detail in <a href="../originServer/originServer.md">Origin Server</a>.</p>
+
+<p>After retrieving the content from the corresponding environment, CloudFront executes the Lambda@Edge associated with the <code class="highlighter-rouge">origin-response</code> stage. This is <a href="https://github.com/hollowverse/route-request/blob/master/src/setHeadersOnOriginResponse.ts"><code class="highlighter-rouge">setHeadersOnOriginResponse</code></a>.</p>
+
+<p><code class="highlighter-rouge">setHeadersOnOriginResponse</code>, as the name implies, sets some headers on the origin response, including <code class="highlighter-rouge">Set-Cookie</code> which allows the user to stay on the same environment for the lifetime of the cookie.</p>
+
+<p>CloudFront takes the response <em>after</em> it has been modified by <code class="highlighter-rouge">setHeadersOnOriginResponse</code> and stores it in the edge cache so it’s available for subsequent requests.</p>
+
+
+      </section>
+      <footer>
+        
+        <p>This project is maintained by <a href="http://github.com/hollowverse">hollowverse</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+  </body>
+</html>

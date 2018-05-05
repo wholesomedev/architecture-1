@@ -1,8 +1,13 @@
+---
+layout: default
+title: Blogging Like a Hacker
+---
+
 # After Downloading `index.html`
 
 This documents what happens after the user loads `index.html` of `hollowverse.com`
 
-## Notable Person page (e.g. /Tom_Hanks)
+## Notable Person page (e.g. `/Tom_Hanks`)
 
 ```mermaid
 sequenceDiagram
@@ -22,21 +27,21 @@ sequenceDiagram
   photos ->> browser: Return photo
 ```
 
-## Search page (/search)
+## Search page (`/search`)
 
 ```mermaid
 sequenceDiagram
-    participant browser as Browser
-    participant algolia as AlgoliaSearch
-    participant photos as photos hollowverse com
-    participant s3 as AWS S3 bucket
+  participant browser as Browser
+  participant algolia as AlgoliaSearch
+  participant photos as photos hollowverse com
+  participant s3 as AWS S3 bucket
 
-    browser ->> algolia: Request results for user search
-    algolia ->> browser: Return search results (including photo URLs)
-    browser ->> photos: Request photo
-    photos ->> s3: Request photo
-    s3 ->> photos: Return photo
-    photos ->> browser: Return photo
+  browser ->> algolia: Request results for user search
+  algolia ->> browser: Return search results (including photo URLs)
+  browser ->> photos: Request photo
+  photos ->> s3: Request photo
+  s3 ->> photos: Return photo
+  photos ->> browser: Return photo
 ```
 
 ## Any Hollowverse page

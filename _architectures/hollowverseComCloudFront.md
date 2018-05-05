@@ -1,3 +1,8 @@
+---
+layout: default
+title: Blogging Like a asdf
+---
+
 # hollowverse.com CloudFront distribution
 
 ```mermaid
