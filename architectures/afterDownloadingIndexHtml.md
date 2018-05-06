@@ -5,7 +5,7 @@ This documents what happens after the user loads `index.html` of `hollowverse.co
 ## Any Hollowverse page
 
 <p align="center">
-<img src="./diagrams/afterDownloadingIndexHtmlAnyHollowversePage.puml.svg">
+<img src="./diagrams/afterDownloadingIndexHtmlAnyHollowversePage.puml.png">
 </p>
 
 After the browser downloads `index.html` for any page the first thing the browser will do is request the CSS and JS files from [hollowverse.com CloudFront distribution](./hollowverseComCloudFront.md).
@@ -19,7 +19,7 @@ Google Analytics logging is used for long-term analytics purposes.
 ## Notable Person page (e.g. `/Tom_Hanks`)
 
 <p align="center">
-<img src="./diagrams/afterDownloadingIndexHtmlNotablePersonPage.puml.svg">
+<img src="./diagrams/afterDownloadingIndexHtmlNotablePersonPage.puml.png">
 </p>
 
 hollowverse.com data is retrievable from `api.hollowverse.com`, an AWS Lambda that executes [`serveApi`](https://github.com/hollowverse/api/blob/master/src/serveApi.ts).
@@ -33,7 +33,7 @@ Both `api.hollowverse.com` and `photos.hollowverse.com` use CloudFront for cachi
 ## Search page (`/search`)
 
 <p align="center">
-<img src="./diagrams/afterDownloadingIndexHtmlSearchPage.puml.svg">
+<img src="./diagrams/afterDownloadingIndexHtmlSearchPage.puml.png">
 </p>
 
 The search page works in a very similar manner to the Notable Person page with the exception that the data is retrieved from AlgoliaSearch instead of `api.hollowverse.com`.

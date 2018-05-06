@@ -1,7 +1,7 @@
 # Serving `index.html`
 
 <p align="center">
-<img src="./diagrams/serveIndexHtml.puml.svg">
+<img src="./diagrams/serveIndexHtml.puml.png">
 </p>
 
 An initial user request to Hollowverse is handled as illustrated in the diagram above.

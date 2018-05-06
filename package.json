@@ -5,9 +5,9 @@
   "author": "Hollowverse",
   "license": "Unlicense",
   "scripts": {
-    "build": "run-s generate-svg post-process-svg",
-    "generate-svg": "for file in architectures/diagrams/*.puml; do puml generate -s $file -o ${file}.svg; done;",
-    "post-process-svg": "for file in architectures/diagrams/*.puml.svg; do echo $(remove-html-comments $file) > $file; done;",
+    "build": "run-s generate-svg",
+    "generate-svg": "for file in architectures/diagrams/*.puml; do puml generate $file -o ${file}.png; done;",
+    "post-process-svg": "for file in architectures/diagrams/*.puml.png; do echo $(remove-html-comments $file) > $file; done;",
     "clown": "clown",
     "pre-push": "yarn common-check",
     "pre-commit": "yarn common-check",
